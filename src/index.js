@@ -1,4 +1,4 @@
-import './style.css'
+import './style.css';
 
 const grab = (e, isId = false, qAll = false) => {
   if (isId) {
@@ -13,14 +13,14 @@ const todo = [
   {
     description: 'Wash the dishes',
     completed: true,
-    index: 0
+    index: 0,
   },
   {
     description: 'complete To Do list project',
     completed: false,
-    index: 1
-  }
-]
+    index: 1,
+  },
+];
 
 todo.forEach((e) => {
   const template = document.createElement('template');
