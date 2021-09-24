@@ -65,3 +65,7 @@ body {
   color: gray;
   font-size: 15px;
 }
+
+.line {
+  text-decoration: line-through;
+}
