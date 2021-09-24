@@ -1,5 +1,5 @@
 import './style.css';
-import change from './status';
+import completed from './status';
 
 const grab = (e, isId = false, qAll = false) => {
   if (isId) {
@@ -66,12 +66,7 @@ work.forEach((e, i) => {
   elements[2].type = 'checkbox';
   elements[2].checked = work[i].completed;
 
-  elements[2].addEventListener('change', () => {
-    work[i].completed = !work[i].completed;
-
-    localStorage.setItem('collection', JSON.stringify(work));
-    window.location.reload();
-  });
+  elements[2].addEventListener('change', () => completed(work, i));
 
   elements[6].innerText = 'delete';
   elements[4].innerText = work[i].description;
