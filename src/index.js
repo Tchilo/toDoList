@@ -8,7 +8,6 @@ form.addEventListener('submit', (event) => {
   store.addTodo(description);
   form.elements[0].value = '';
 });
-
 window.addEventListener('load', () => {
   document.getElementById('clear-btn').addEventListener('click', () => {
     store.clearCompleted();
