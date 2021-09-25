@@ -1,10 +1,16 @@
 import './style.css';
 import completed from './status';
+import {
+  toStorage,
+  apply,
+  clearAll,
+} from './crud';
 
 const grab = (e, isId = false, qAll = false) => {
   if (isId) {
     return document.getElementById(e);
-  } if (qAll) {
+  }
+  if (qAll) {
     return document.querySelectorAll(`.${e}`);
   }
   return document.querySelector(`.${e}`);
@@ -23,28 +29,7 @@ function cv3(n) {
   return elements;
 }
 
-const todo = [
-  {
-    description: 'Wash the dishes',
-    completed: false,
-    index: 0,
-  },
-  {
-    description: 'complete To Do list project',
-    completed: false,
-    index: Array.length,
-  },
-  {
-    description: 'Wash the dishes',
-    completed: false,
-    index: 0,
-  },
-  {
-    description: 'Wash the dishes',
-    completed: false,
-    index: 0,
-  },
-];
+const todo = [];
 
 if (localStorage.getItem('collection') === null) {
   localStorage.setItem('collection', JSON.stringify(todo));
@@ -78,5 +63,43 @@ work.forEach((e, i) => {
   elements[0].appendChild(elements[3]);
   elements[0].appendChild(elements[5]);
 
+  elements[4].contentEditable = true;
+
+  elements[4].addEventListener('input', (e) => {
+    apply(e.target.textContent, i);
+  });
+
   grab('todo-list', true).appendChild(elements[0]);
 });
+
+const form = grab('form', true);
+const input = grab('input', true);
+
+form.addEventListener('submit', (e) => {
+  e.preventDefault()
+  const todos = JSON.parse(localStorage.getItem('collection'));
+  const todo = {
+    description: input.value,
+    completed: false,
+    index: (todos.length > 0) ? todos.length + 1 : 1,
+  }
+
+
+  const food = localStorage.getItem('collection')
+  if (food !== undefined) {
+    const realFood = JSON.parse(food);
+    realFood.push(todo);
+    toStorage(realFood);
+    location.reload()
+  } else {
+    const realFood = [];
+    realFood.push(todo);
+    toStorage(realFood);
+    location.reload();
+  }
+});
+
+const deleteBtn = grab('deleteAll', true);
+deleteBtn.addEventListener('click', clearAll);
+
+// elements[2].addEventListener('change', () => completed(work, i));
