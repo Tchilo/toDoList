@@ -1,57 +1,78 @@
-export function updateIndices(callback) {
-  const tasks = JSON.parse(localStorage.getItem('collection'));
+export const TOGGLE = 'action/toggle';
+export const LOAD_TODOS = 'action/load_todos';
+export const SWAP_TODOS = 'action/swap';
+export const ADD_TODO = 'action/add_todo';
+export const EDIT_TODO = 'action/edit_description';
+export const DELETE_TODO = 'action/delete_todo';
+export const CLEAR_COMPLETED = 'action/clear_completed';
 
-  if (tasks !== undefined && tasks.length > 0) {
-    for (let j = 0; j < tasks.length; j + 1) {
-      const task = tasks[j];
-      task.index = j + 1;
-    }
+export default function createStore() {
+  let state = [];
+  const todos = [];
 
-    localStorage.setItem('collection', JSON.stringify(tasks));
-    callback();
-  }
+  const getState = () => state;
 
-  // if (tasks !== null && tasks.length > 0) {
-  //   for (let k = 0; k < tasks.length; k + 1) {
-  //     const item = tasks[k];
-  //     item.index = k + 1;
-  //     updatedTasks.push(item);
+  const todo = (todo) => todos.push(todo);
 
-  //     if (k === tasks.length - 1) {
-  //       localStorage.setItem('collection', JSON.stringify(updatedTasks));
-  //       callback();
-  //     }
-  //   }
-  // }
-}
-
-export const toStorage = (bar) => {
-  localStorage.setItem('collection', JSON.stringify(bar));
-};
-
-export const apply = (change, i) => {
-  const todosList = JSON.parse(localStorage.getItem('collection'));
-  todosList[i].description = change;
-  localStorage.setItem('collection', JSON.stringify(todosList));
-};
-
-export function clearAll() {
-  let todosList = JSON.parse(localStorage.getItem('collection'));
-  if (todosList !== null && todosList.length > 0) {
-    function check(item) {
-      if (!item.completed) {
-        return item;
+  const dispatch = (action) => {
+    switch (action.type) {
+      case TOGGLE: {
+        const todo = state.find((item) => item.index === action.index);
+        todo.completed = !todo.completed;
+        break;
       }
+      case LOAD_TODOS: {
+        state = action.items;
+        break;
+      }
+      case SWAP_TODOS: {
+        const src = state[action.source];
+        const dest = state[action.dest];
+
+        state[action.source] = dest;
+        state[action.dest] = src;
+
+        dest.index = action.source;
+        src.index = action.dest;
+        break;
+      }
+      case ADD_TODO: {
+        if (action.text.trim()) {
+          const todo = {
+            index: state.length,
+            description: action.text,
+            completed: false,
+          };
+          state.push(todo);
+        }
+        break;
+      }
+      case EDIT_TODO: {
+        const todo = state[action.index];
+        if (todo && action.text.trim()) {
+          todo.description = action.text;
+        }
+        break;
+      }
+      case DELETE_TODO: {
+        state = state.filter((todo) => todo.index !== action.index)
+          .map((item, index) => ({ ...item, index }));
+        break;
+      }
+      case CLEAR_COMPLETED: {
+        state = state.filter((todo) => !todo.completed).map((item, index) => ({ ...item, index }));
+        break;
+      }
+      default:
+        break;
     }
 
-    todosList = todosList.filter(check);
+    todos.forEach((todo) => todo());
+  };
 
-    localStorage.setItem('collection', JSON.stringify(todosList));
-    window.location.reload();
-  }
+  return {
+    getState,
+    todo,
+    dispatch,
+  };
 }
-
-// export function bin() {
-//   let todosList = JSON.parse(localStorage.getItem('collection'));
-
-// }
