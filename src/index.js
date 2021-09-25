@@ -4,6 +4,7 @@ import {
   toStorage,
   apply,
   clearAll,
+  updateIndices,
 } from './crud';
 
 const grab = (e, isId = false, qAll = false) => {
@@ -30,10 +31,6 @@ function cv3(n) {
 }
 
 const todo = [];
-
-if (localStorage.getItem('collection') === null) {
-  localStorage.setItem('collection', JSON.stringify(todo));
-}
 
 const work = JSON.parse(localStorage.getItem('collection'));
 
@@ -72,34 +69,54 @@ work.forEach((e, i) => {
   grab('todo-list', true).appendChild(elements[0]);
 });
 
+if (localStorage.getItem('collection') === null) {
+  localStorage.setItem('collection', JSON.stringify(todo));
+}
+
 const form = grab('form', true);
 const input = grab('input', true);
 
 form.addEventListener('submit', (e) => {
-  e.preventDefault()
+  e.preventDefault();
   const todos = JSON.parse(localStorage.getItem('collection'));
   const todo = {
     description: input.value,
     completed: false,
     index: (todos.length > 0) ? todos.length + 1 : 1,
-  }
+  };
 
-
-  const food = localStorage.getItem('collection')
+  const food = localStorage.getItem('collection');
   if (food !== undefined) {
     const realFood = JSON.parse(food);
     realFood.push(todo);
     toStorage(realFood);
-    location.reload()
+    window.location.reload();
   } else {
     const realFood = [];
     realFood.push(todo);
     toStorage(realFood);
-    location.reload();
+    window.location.reload();
   }
 });
 
-const deleteBtn = grab('deleteAll', true);
-deleteBtn.addEventListener('click', clearAll);
+const deleteBtn = document.querySelectorAll('.delete');
+deleteBtn.forEach((deleteItem) => {
+  deleteItem.addEventListener('click', (e) => {
+    e.preventDefault();
+    const todos = JSON.parse(localStorage.getItem('collection'));
+    todos.splice(e.target.index, 1);
+    localStorage.setItem('collection', JSON.stringify(todos));
+    window.location.reload();
+  });
+});
 
-// elements[2].addEventListener('change', () => completed(work, i));
+const deleteBtnAll = grab('deleteAll', true);
+deleteBtnAll.addEventListener('click', clearAll);
+
+// updateIndices(() => {
+//   cv3();
+// });
+
+updateIndices(() => {
+  console.log('gggg');
+});
